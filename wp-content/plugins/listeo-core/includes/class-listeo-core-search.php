@@ -23,7 +23,7 @@ class Listeo_Core_Search {
 
 		//add_action( 'parse_tax_query', array( $this, 'parse_tax_query_listings' ), 1 );
 		add_shortcode( 'listeo_search_form', array($this, 'output_search_form'));
-		
+
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 
 		if(get_option('listeo_search_name_autocomplete')) {
@@ -39,7 +39,7 @@ class Listeo_Core_Search {
 		add_action( 'wp_ajax_listeo_get_features_from_category', array( $this, 'ajax_get_features_from_category' ) );
 		add_action( 'wp_ajax_nopriv_listeo_get_features_ids_from_category', array( $this, 'ajax_get_features_ids_from_category' ) );
 		add_action( 'wp_ajax_listeo_get_features_ids_from_category', array( $this, 'ajax_get_features_ids_from_category' ) );
-   		
+
  		add_filter( 'posts_where', array( $this,'listeo_date_range_filter') );
 
 	}
@@ -52,38 +52,38 @@ function listeo_date_range_filter( $where ) {
 global $wpdb;
 
 	$date_range = get_query_var( 'date_range' );
-	
-	if(!empty($date_range)) : 
+
+	if(!empty($date_range)) :
 //TODO replace / with - if first is day - month- year
 		$dates = explode(' - ',$date_range);
 		//setcookie('listeo_date_range', $date_range, time()+31556926);
 		$date_start = $dates[0];
 		$date_end = $dates[1];
-		
+
 		$format_date_start = esc_sql ( date( "Y-m-d H:i:s", strtotime( $wpdb->esc_like( $date_start ) ) ) );
 		 $format_date_end = esc_sql ( date( "Y-m-d H:i:s", strtotime( $wpdb->esc_like( $date_end ) ) ) );
-		   
+
 		// $booking_hours = Listeo_Core_Bookings_Calendar::wpk_change_booking_hours( $date_start, $date_end );
         // $date_start = $booking_hours[ 'date_start' ];
         // $date_end = $booking_hours[ 'date_end' ];
 
 	 	$table_name = $wpdb->prefix . 'bookings_calendar';
-	 		
+
 	    $where .= $GLOBALS['wpdb']->prepare(  " AND {$wpdb->prefix}posts.ID ".
 	        'NOT IN ( '.
 	            'SELECT listing_id '.
 	            "FROM {$wpdb->prefix}bookings_calendar ".
-	            'WHERE 
-            	( %s >= date_start AND %s <= date_end ) 
-            	OR 
-            	( %s >= date_start AND %s <= date_end ) 
-            	OR 
+	            'WHERE
+            	( %s >= date_start AND %s <= date_end )
+            	OR
+            	( %s >= date_start AND %s <= date_end )
+            	OR
             	( date_start >= %s AND date_end <= %s ) GROUP BY listing_id '.
 	        ' ) ', $format_date_start, $format_date_start, $format_date_end,  $format_date_end, $format_date_start, $format_date_end );
-	  
-	   
+
+
 	endif;
-    
+
     return $where;
 }
 
@@ -114,38 +114,38 @@ global $wpdb;
 
 		if(isset($_GET['open_now'])) {
 			$filtered_posts = array();
-			
+
 			foreach ( $posts as $post ) {
-				if( listeo_check_if_open($post) ){ 
+				if( listeo_check_if_open($post) ){
 					$filtered_posts[] = $post;
 				}
-				
+
 			}
 			$this->found_posts = count($filtered_posts);;
 			return $filtered_posts ;
 		}
 
 		return $posts;
-		
+
 	}
 
 	function open_now_results_filter_pagination( $found_posts, $query ) {
 		if(isset($_GET['open_now'])) {
 			// Define the homepage offset...
 			$found_posts = $this->found_posts;
-		} 
+		}
 		return $found_posts;
 	}
 
 
-	static function wp_print_footer_scripts() {  
+	static function wp_print_footer_scripts() {
 		?>
 	    <script type="text/javascript">
 	        (function($){
 	        $(document).ready(function(){
 
 	            $( '#keyword_search.title-autocomplete' ).autocomplete({
-	                
+
 	                source: function(req, response){
 	                    $.getJSON('<?php echo admin_url( 'admin-ajax.php' ); ?>'+'?callback=?&action=listeo_core_incremental_listing_suggest', req, response);
 	                },
@@ -153,17 +153,17 @@ global $wpdb;
 	                    window.location.href=ui.item.link;
 	                },
 	                minLength: 3,
-	            }); 
+	            });
 	         });
 
 	        })(this.jQuery);
 
-	           
+
 	    </script><?php
     }
 
     static function wp_ajax_listeo_core_incremental_listing_suggest() {
-    
+
         $suggestions = array();
         $posts = get_posts( array(
             's' => $_REQUEST['term'],
@@ -176,7 +176,7 @@ global $wpdb;
             $suggestion = array();
             $suggestion['label'] =  html_entity_decode($post->post_title, ENT_QUOTES, 'UTF-8');
             $suggestion['link'] = get_permalink($post->ID);
-            
+
             $suggestions[] = $suggestion;
         }
         // JSON encode and echo
@@ -188,7 +188,7 @@ global $wpdb;
     }
 
 	public function add_query_vars($vars) {
-		
+
 		$new_vars = $this->build_available_query_vars();
 	    $vars = array_merge( $new_vars, $vars );
 		return $vars;
@@ -201,45 +201,45 @@ global $wpdb;
         foreach ($taxonomy_objects as $tax) {
         	array_push($query_vars, 'tax-'.$tax->name);
         }
-        
-     
-      
+
+
+
         $service = Listeo_Core_Meta_Boxes::meta_boxes_service();
             foreach ($service['fields'] as $key => $field) {
               	array_push($query_vars, $field['id']);
-              	
-        } 
+
+        }
         $location = Listeo_Core_Meta_Boxes::meta_boxes_location();
-        
+
             foreach ($location['fields'] as $key => $field) {
               	array_push($query_vars, $field['id']);
-              	
+
         }
         $event = Listeo_Core_Meta_Boxes::meta_boxes_event();
             foreach ($event['fields']  as $key => $field) {
               	array_push($query_vars, $field['id']);
-              	
-        }  
+
+        }
         $prices = Listeo_Core_Meta_Boxes::meta_boxes_prices();
             foreach ($prices['fields']  as $key => $field) {
               	array_push($query_vars, $field['id']);
-              	
-        }  
+
+        }
         $contact = Listeo_Core_Meta_Boxes::meta_boxes_contact();
             foreach ($contact['fields']  as $key => $field) {
               	array_push($query_vars, $field['id']);
-              	
-        } 
+
+        }
         $rental = Listeo_Core_Meta_Boxes::meta_boxes_rental();
             foreach ($rental['fields']  as $key => $field) {
               	array_push($query_vars, $field['id']);
-              	
-        }  
+
+        }
         $custom = Listeo_Core_Meta_Boxes::meta_boxes_custom();
             foreach ($custom['fields']  as $key => $field) {
               	array_push($query_vars, $field['id']);
-              	
-        } 
+
+        }
         array_push($query_vars, '_price_range');
         array_push($query_vars, '_listing_type');
         array_push($query_vars, '_price');
@@ -261,58 +261,58 @@ global $wpdb;
 		if ( is_tax('listing_category') || is_tax('service_category') || is_tax('event_category') || is_tax('rental_category') || is_tax('listing_feature')  || is_tax('region') ) {
 
 			$per_page = get_option('listeo_listings_per_page',10);
-		    $query->set( 'posts_per_page', $per_page );	
+		    $query->set( 'posts_per_page', $per_page );
 		}
 
 		if ( is_post_type_archive( 'listing' ) || is_author() || is_tax('listing_category') || is_tax('listing_feature') || is_tax('event_category') || is_tax('service_category') || is_tax('rental_category') || is_tax('region')) {
-			
+
 			$ordering_args = Listeo_Core_Listing::get_listings_ordering_args( );
-			
+
 			if(isset($ordering_args['meta_key']) && $ordering_args['meta_key'] != '_featured' ){
 				$query->set('meta_key', $ordering_args['meta_key']);
-			} 
+			}
 
 			$query->set('orderby', $ordering_args['orderby']);
         	$query->set('order', $ordering_args['order'] );
 
 			$keyword = get_query_var( 'keyword_search' );
-			
+
 			$keywords_post_ids = array();
 			$location_post_ids = array();
 	        if ( $keyword  ) {
 				global $wpdb;
 				// Trim and explode keywords
 				//$keywords = array_map( 'trim', explode( ',', $keyword  ) );
-			
+
 				// Setup SQL
 				$posts_keywords_sql    = array();
 				$postmeta_keywords_sql = array();
 				// Loop through keywords and create SQL snippets
-				
+
 					// Create post meta SQL
 					$postmeta_keywords_sql[] = " meta_value LIKE '%" . esc_sql( $keyword ) . "%' ";
 					// Create post title and content SQL
 					$posts_keywords_sql[]    = " post_title LIKE '%" . esc_sql( $keyword ) . "%' OR post_content LIKE '%" . esc_sql(  $keyword ) . "%' ";
-				
+
 
 				// Get post IDs from post meta search
 				$post_ids = $wpdb->get_col( "
 				    SELECT DISTINCT post_id FROM {$wpdb->postmeta}
 				    WHERE " . implode( ' OR ', $postmeta_keywords_sql ) . "
 				" );
-	
+
 				// Merge with post IDs from post title and content search
 
 				$keywords_post_ids = array_merge( $post_ids, $wpdb->get_col( "
 				    SELECT ID FROM {$wpdb->posts}
 				    WHERE ( " . implode( ' OR ', $posts_keywords_sql ) . " )
 				    AND post_type = 'listing'
-				   
+
 				" ), array( 0 ) );
 
 			}
 			$location = get_query_var( 'location_search' );
-			
+
 			if( $location ) {
 
 				$radius = get_query_var('search_radius');
@@ -324,10 +324,10 @@ global $wpdb;
 				if(!empty($location) && !empty($radius) && !empty($radius_api_key)) {
 
 					//search by google
-				
+
 					$latlng = listeo_core_geocode($location);
-					
-					$nearbyposts = listeo_core_get_nearby_listings($latlng[0], $latlng[1], $radius, $radius_type ); 
+
+					$nearbyposts = listeo_core_get_nearby_listings($latlng[0], $latlng[1], $radius, $radius_type );
 
 					listeo_core_array_sort_by_column($nearbyposts,'distance');
 					$location_post_ids = array_unique(array_column($nearbyposts, 'post_id'));
@@ -342,12 +342,12 @@ global $wpdb;
 					global $wpdb;
 					// Trim and explode keywords
 					$locations = array_map( 'trim', explode( ',', $location  ) );
-				
+
 					// Setup SQL
 					$posts_locations_sql    = array();
 					$postmeta_locations_sql = array();
 					// Loop through keywords and create SQL snippets
-					
+
 					if(get_option('listeo_search_only_address','off') == 'on') {
 						$postmeta_locations_sql[] = " meta_value LIKE '%" . esc_sql( $locations[0] ) . "%'  AND meta_key = '_address'";
 						$postmeta_locations_sql[] = " meta_value LIKE '%" . esc_sql( $locations[0] ) . "%'  AND meta_key = '_friendly_address'" ;
@@ -364,7 +364,7 @@ global $wpdb;
 					    WHERE " . implode( ' OR ', $postmeta_locations_sql ) . "
 
 					" );
-		
+
 					// Merge with post IDs from post title and content search
 					if(get_option('listeo_search_only_address','off') == 'on') {
 						$location_post_ids = array_merge( $post_ids,array( 0 ) );
@@ -374,14 +374,14 @@ global $wpdb;
 						    WHERE ( " . implode( ' OR ', $posts_locations_sql ) . " )
 						    AND post_type = 'listing'
 					    	AND post_status = 'publish'
-						   
+
 						" ), array( 0 ) );
 					}
 
 
 				}
 			}
-	
+
 			if ( sizeof( $keywords_post_ids ) != 0 && sizeof( $location_post_ids ) != 0 ) {
 				$post_ids = array_intersect($keywords_post_ids, $location_post_ids);
 				$query->set( 'post__in', $post_ids );
@@ -391,7 +391,7 @@ global $wpdb;
 
 				$query->set( 'post__in', $location_post_ids );
 			}
-			
+
 
 			// if ( ! empty( $post_ids ) ) {
 		 //        $query->set( 'post__in', $post_ids );
@@ -400,12 +400,12 @@ global $wpdb;
 			$query->set('post_type', 'listing');
 	 		$args = array();
 			$tax_query = array();
-			
+
 			$tax_query = array(
 		        'relation' => 'AND',
 		    );
 			$taxonomy_objects = get_object_taxonomies( 'listing', 'objects' );
-			
+
             foreach ($taxonomy_objects as $tax) {
             	$get_tax = get_query_var( 'tax-'.$tax->name  );
             	if(is_array($get_tax)){
@@ -416,11 +416,11 @@ global $wpdb;
 				           'taxonomy' =>   $tax->name,
 				           'field'    =>   'slug',
 				           'terms'    =>   $value,
-				           
+
 				        ));
-				        
+
 			    	}
-			    	
+
             	} else {
 	            	if( $get_tax ){
 				    	$term = get_term_by('slug', $get_tax, $tax->name);
@@ -435,9 +435,9 @@ global $wpdb;
 				    }
 			 	}
             }
-            
 
-			$query->set('tax_query', $tax_query);	
+
+			$query->set('tax_query', $tax_query);
 
 			$available_query_vars = $this->build_available_query_vars();
 
@@ -450,10 +450,10 @@ global $wpdb;
 					continue;
 				}
 
-				
+
 
 				// if(!empty($meta_min) && !empty($meta_max) ) {
-			
+
 				// 	$meta_queries[] = array(
 			 //            'key' =>  substr($meta_key,0, -4),
 			 //            'value' => array($meta_min, $meta_max),
@@ -485,7 +485,7 @@ global $wpdb;
 				if($meta_key == '_price'){
 					$meta = get_query_var( '_price_range' );
 					if(!empty($meta)){
-						
+
 						$range = array_map( 'absint', explode( ',', $meta ) );
 
 						$meta_queries[] = array(
@@ -504,7 +504,7 @@ global $wpdb;
 		                                'compare' => 'BETWEEN',
 		                                'type' => 'NUMERIC',
 		                            ),
-						 
+
 						        ),
 						        array(
 						            'relation' => 'AND',
@@ -520,30 +520,30 @@ global $wpdb;
 		                                'compare' => '>=',
 		                                'type' => 'NUMERIC',
 		                            ),
-						 
+
 						        ),
 				        );
-				       
+
 			        }
 				} else {
 					if (substr($meta_key, -4) == "_min" || substr($meta_key, -4) == "_max") { continue; }
 					$meta = get_query_var( $meta_key );
 					if ( $meta ) {
-						
+
 						$meta_queries[] = array(
 			                'key'     => $meta_key,
-			                'value'   => $meta, 
+			                'value'   => $meta,
 			            );
 					}
 				}
 
 			}
-			
+
 			if( isset($ordering_args['meta_key']) && $ordering_args['meta_key'] == '_featured' ){
 
 					$meta_queries[] = array(
 					'relation' => 'OR',
-					
+
 					'notexistfeatured_clause' => array(
 						'key'     => '_featured',
 						'compare' => 'NOT EXISTS'
@@ -560,25 +560,25 @@ global $wpdb;
 					),
 				);
 				$query->set('order', 'DESC');
-				$query->set('orderby', 
-					array( 
-						'featured_clause' => 'DESC', 
-						
+				$query->set('orderby',
+					array(
+						'featured_clause' => 'DESC',
+
 					));
 					// 	ini_set('xdebug.var_display_max_depth', '10');
 					//  ini_set('xdebug.var_display_max_children', '256');
 					//  ini_set('xdebug.var_display_max_data', '1024');
 					// 	var_dump($query);
 			}
-		
+
 			if(!empty($meta_queries)){
 				$query->set('meta_query', array(
 		            'relation' => 'AND',
-		            $meta_queries 
-		        ) );	
+		            $meta_queries
+		        ) );
 
 	        }
-	    } 
+	    }
 
 	    return $query;
 	} /*eof function*/
@@ -598,12 +598,12 @@ public function ajax_get_listings() {
 
 		$orderby   	= (isset($_REQUEST['orderby'])) ?  sanitize_text_field( stripslashes( $_REQUEST['orderby'] ) ) : '';
 		$order   	= (isset($_REQUEST['order'])) ?  sanitize_text_field( stripslashes( $_REQUEST['order'] ) ) : '';
-		
+
 		$style   	= sanitize_text_field( stripslashes( $_REQUEST['style'] ) );
 		$grid_columns  = sanitize_text_field( stripslashes( $_REQUEST['grid_columns'] ) );
 		$per_page   = sanitize_text_field( stripslashes( $_REQUEST['per_page'] ) );
 		$date_range =  (isset($_REQUEST['date_range'])) ? sanitize_text_field( stripslashes( $_REQUEST['date_range'] ) ) : '';
-				
+
 
 		$region   	= (isset($_REQUEST['tax-region'])) ?  sanitize_text_field( stripslashes( $_REQUEST['tax-region'] ) ) : '';
 		$category   	= (isset($_REQUEST['tax-listing_category'])) ?  sanitize_text_field( stripslashes( $_REQUEST['tax-listing_category'] ) ) : '';
@@ -611,18 +611,18 @@ public function ajax_get_listings() {
 
 		$date_start = '';
 		$date_end = '';
-		
+
 		if($date_range){
 
-			$dates = explode(' - ',$date_range);	
+			$dates = explode(' - ',$date_range);
 			$date_start = $dates[0];
 			$date_end = $dates[1];
 
 			// $date_start = esc_sql ( date( "Y-m-d H:i:s", strtotime(  $date_start )  ) );
 		 //    $date_end = esc_sql ( date( "Y-m-d H:i:s", strtotime( $date_end ) )  );
-		    
+
 		}
-		
+
 		if(empty($per_page)) { $per_page = get_option('listeo_listings_per_page',10); }
 
 		$query_args = array(
@@ -642,7 +642,7 @@ public function ajax_get_listings() {
 			'tax-listing_category'  => $category,
 
 		);
-		
+
 		$query_args['listeo_orderby'] = (isset($_REQUEST['listeo_core_order'])) ? sanitize_text_field( $_REQUEST['listeo_core_order'] ) : false;
 
 		$taxonomy_objects = get_object_taxonomies( 'listing', 'objects' );
@@ -651,30 +651,30 @@ public function ajax_get_listings() {
 				$query_args[ 'tax-'.$tax->name ] = $_REQUEST[ 'tax-'.$tax->name ];
 			}
         }
-		
+
 		$available_query_vars = $this->build_available_query_vars();
 		foreach ($available_query_vars as $key => $meta_key) {
 			if(isset($_REQUEST[ $meta_key ])){
-				$query_args[ $meta_key ] = $_REQUEST[ $meta_key ];	
+				$query_args[ $meta_key ] = $_REQUEST[ $meta_key ];
 			}
-			
+
 		}
 
 
 		// add meta boxes support
-		
+
 		$orderby = isset($_REQUEST['listeo_core_order']) ? $_REQUEST['listeo_core_order'] : 'date';
 
-	
+
 		// if ( ! is_null( $featured ) ) {
 		// 	$featured = ( is_bool( $featured ) && $featured ) || in_array( $featured, array( '1', 'true', 'yes' ) ) ? true : false;
 		// }
-		ob_start();
-	
+		/*ob_start();
+
 		$listings = Listeo_Core_Listing::get_real_listings( apply_filters( 'listeo_core_output_defaults_args', $query_args ));
 		$verifylistings = Listeo_Core_Listing::get_verify_listings( apply_filters( 'listeo_core_output_defaults_args', $query_args ));
 		$unverifylistings = Listeo_Core_Listing::get_unverify_listings( apply_filters( 'listeo_core_output_defaults_args', $query_args ));
-		
+
 		if($listings->found_posts > 0){
 			$query_args['offset'] = 0;
 			$vlistings = Listeo_Core_Listing::get_verify_listings( apply_filters( 'listeo_core_output_defaults_args', $query_args ));
@@ -703,26 +703,26 @@ public function ajax_get_listings() {
 
 		);
 
-		
+
 		// var_dump($result);
 		if ( $result['found_listings'] ) {
 			$style_data = array(
-				'style' 		=> $style, 
-				// 'class' 		=> $custom_class, 
-				//'in_rows' 		=> $in_rows, 
+				'style' 		=> $style,
+				// 'class' 		=> $custom_class,
+				//'in_rows' 		=> $in_rows,
 				'grid_columns' 	=> $grid_columns,
-				'max_num_pages'	=> $verifylistings->max_num_pages, 
-				'counter'		=> $verifylistings->found_posts 
+				'max_num_pages'	=> $verifylistings->max_num_pages,
+				'counter'		=> $verifylistings->found_posts
 			);
 			$unverifystyle_data = array(
-				'style' 		=> $style, 
-				// 'class' 		=> $custom_class, 
-				//'in_rows' 		=> $in_rows, 
+				'style' 		=> $style,
+				// 'class' 		=> $custom_class,
+				//'in_rows' 		=> $in_rows,
 				'grid_columns' 	=> $grid_columns,
-				'max_num_pages'	=> $unverifylistings->max_num_pages, 
-				'counter'		=> $unverifylistings->found_posts 
+				'max_num_pages'	=> $unverifylistings->max_num_pages,
+				'counter'		=> $unverifylistings->found_posts
 			);
-			//$template_loader->set_template_data( $style_data )->get_template_part( 'listings-start' ); 
+			//$template_loader->set_template_data( $style_data )->get_template_part( 'listings-start' );
 			?>
 			<div class="loader-ajax-container" style="" > <div class="loader-ajax"></div> </div>
 				<?php
@@ -731,7 +731,7 @@ public function ajax_get_listings() {
 						$verifylistings->the_post();
 						// $verify = get_post_meta(get_the_ID(),'_verified',true);
 						// if($verify=='on'){
-							$template_loader->set_template_data( $style_data )->get_template_part( 'content-listing',$style ); 	
+							$template_loader->set_template_data( $style_data )->get_template_part( 'content-listing',$style );
 						// }
 					}
 					if($verifylistings->found_posts < $per_page){
@@ -739,7 +739,7 @@ public function ajax_get_listings() {
 							$unverifylistings->the_post();
 							// $verify = get_post_meta(get_the_ID(),'_verified',true);
 							// if($verify=='on'){
-								$template_loader->set_template_data( $unverifystyle_data )->get_template_part( 'content-listing',$style ); 	
+								$template_loader->set_template_data( $unverifystyle_data )->get_template_part( 'content-listing',$style );
 							// }
 						}
 					}
@@ -749,7 +749,7 @@ public function ajax_get_listings() {
 						$unverifylistings->the_post();
 						// $verify = get_post_meta(get_the_ID(),'_verified',true);
 						// if($verify=='on'){
-							$template_loader->set_template_data( $unverifystyle_data )->get_template_part( 'content-listing',$style ); 	
+							$template_loader->set_template_data( $unverifystyle_data )->get_template_part( 'content-listing',$style );
 						// }
 					}
 				}
@@ -761,26 +761,68 @@ public function ajax_get_listings() {
 				// wp_redirect('/event-planner');
 				$template_loader->get_template_part( 'archive/no-found' );
 			}
-			//$template_loader->set_template_data( $style_data )->get_template_part( 'listings-end' ); 
+			//$template_loader->set_template_data( $style_data )->get_template_part( 'listings-end' );
 		} else {
 			// wp_redirect('/event-planner');
 			?>
 			<div class="loader-ajax-container" style=""> <div class="loader-ajax"></div> </div>
 			<?php
-			$template_loader->get_template_part( 'archive/no-found' ); 
+			$template_loader->get_template_part( 'archive/no-found' );
 			?><div class="clearfix"></div>
 			<?php
 		}
-		
+
 		$result['html'] = ob_get_clean();
+		$result['total_data'] = $listings;
 		$result['pagination'] = arlisteo_core_ajax_pagination( $verifylistings->max_num_pages,$unverifylistings->max_num_pages, absint( $_REQUEST['page'] ) );
-	
+
+		wp_send_json($result);*/
+
+		$listings = Listeo_Core_Listing::get_real_listings( apply_filters( 'listeo_core_output_defaults_args', $query_args ));
+		$result = array(
+			'found_listings'    => $listings->have_posts(),
+			'max_num_pages' => $listings->max_num_pages,
+		);
+
+		ob_start();
+		if ( $result['found_listings'] ) {
+			$style_data = array(
+				'style' 		=> $style,
+//				'class' 		=> $custom_class,
+				//'in_rows' 		=> $in_rows,
+				'grid_columns' 	=> $grid_columns,
+				 'max_num_pages'	=> $listings->max_num_pages,
+				 'counter'		=> $listings->found_posts
+			);
+			//$template_loader->set_template_data( $style_data )->get_template_part( 'listings-start' );
+			?>
+			<div class="loader-ajax-container" style=""> <div class="loader-ajax"></div> </div>
+				<?php
+				while ( $listings->have_posts() ) {
+					$listings->the_post();
+
+					$template_loader->set_template_data( $style_data )->get_template_part( 'content-listing',$style );
+					}
+				?>
+				<div class="clearfix"></div>
+			</div>
+			<?php
+			//$template_loader->set_template_data( $style_data )->get_template_part( 'listings-end' );
+		} else {
+			?>
+			<div class="loader-ajax-container" style=""> <div class="loader-ajax"></div> </div>
+			<?php
+			$template_loader->get_template_part( 'archive/no-found' );
+			?><div class="clearfix"></div>
+			<?php
+		}
+		$result['html'] = ob_get_clean();
+		$result['pagination'] = listeo_core_ajax_pagination( $listings->max_num_pages, absint( $_REQUEST['page'] ) );
 		wp_send_json($result);
-		
 	}
 
 	public function ajax_get_features_from_category(){
-		
+
 		$categories  = (isset($_REQUEST['cat_ids'])) ? $_REQUEST['cat_ids'] : '' ;
 
 		$panel  =  (isset($_REQUEST['panel'])) ? $_REQUEST['panel'] : '' ;
@@ -789,52 +831,52 @@ public function ajax_get_listings() {
 
 		if($categories){
 			$features = array();
-			
+
 			foreach ($categories as $category) {
 				if(is_numeric($category)) {
-					$cat_object = get_term_by('id', $category, 'listing_category');	
+					$cat_object = get_term_by('id', $category, 'listing_category');
 				} else {
-					$cat_object = get_term_by('slug', $category, 'listing_category');	
+					$cat_object = get_term_by('slug', $category, 'listing_category');
 				}
 				if($cat_object){
 					$features_temp = get_term_meta($cat_object->term_id,'listeo_taxonomy_multicheck',true);
-					
+
 					if($features_temp) {
 						$features = array_merge($features,$features_temp);
 					}
 					$features = array_unique($features);
-					
+
 				}
 			}
-			
+
 
 			if($features){
 				if($panel != 'false'){ ?>
 					<div class="panel-checkboxes-container">
 					<?php
 						$groups = array_chunk($features, 4, true);
-								
+
 						foreach ($groups as $group) { ?>
-							
-							<?php foreach ($group as $feature) { 
-								$feature_obj = get_term_by('slug', $feature, 'listing_feature'); 
+
+							<?php foreach ($group as $feature) {
+								$feature_obj = get_term_by('slug', $feature, 'listing_feature');
 								if( !$feature_obj ){
 									continue;
 								}
 								?>
 								<div class="panel-checkbox-wrap">
 									<input form="listeo_core-search-form" id="<?php echo esc_html($feature) ?>" value="<?php echo esc_html($feature) ?>" type="checkbox" name="tax-listing_feature[<?php echo esc_html($feature); ?>]">
-									<label for="<?php echo esc_html($feature) ?>"><?php echo $feature_obj->name; ?></label>	
+									<label for="<?php echo esc_html($feature) ?>"><?php echo $feature_obj->name; ?></label>
 								</div>
 							<?php } ?>
-							
+
 
 						<?php } ?>
-					
+
 					</div>
 				<?php } else {
 
-					foreach ($features as $feature) { 
+					foreach ($features as $feature) {
 						$feature_obj = get_term_by('slug', $feature, 'listing_feature');
 						if( !$feature_obj ){
 							continue;
@@ -843,16 +885,16 @@ public function ajax_get_listings() {
 						<label for="<?php echo esc_html($feature) ?>"><?php echo $feature_obj->name; ?></label>
 					<?php }
 				}
-			} else { 
-				if( $cat_object && isset($cat_object->name)) { 
+			} else {
+				if( $cat_object && isset($cat_object->name)) {
 					$success = false; ?>
 				<div class="notification notice <?php if($panel){ echo "col-md-12"; } ?>">
 					<p>
 					<?php printf( __( 'Category "%s" doesn\'t have any additional filters', 'listeo_core' ), $cat_object->name )  ?>
-						
+
 					</p>
 				</div>
-				<?php } else { 
+				<?php } else {
 					$success = false; ?>
 				<div class="notification warning"><p><?php esc_html_e('Please choose category to display filters','listeo_core') ?></p> </div>
 			<?php }
@@ -861,14 +903,14 @@ public function ajax_get_listings() {
 			$success = false; ?>
 			<div class="notification warning"><p><?php esc_html_e('Please choose category to display filters','listeo_core') ?></p> </div>
 		<?php }
-				
+
 		$result['output'] = ob_get_clean();
 		$result['success'] = $success;
 		wp_send_json($result);
 	}
-		
+
 	public function ajax_get_features_ids_from_category(){
-		
+
 		$categories  = $_REQUEST['cat_ids'];
 		$panel  =  $_REQUEST['panel'];
 		$selected  =  isset($_REQUEST['selected']) ? $_REQUEST['selected'] : false;
@@ -884,17 +926,17 @@ public function ajax_get_listings() {
 				}
 			}
 		};
-		
+
 		ob_start();
 
 		if($categories){
-		
+
 			$features = array();
 			foreach ($categories as $category) {
 				if(is_numeric($category)) {
-					$cat_object = get_term_by('id', $category, 'listing_category');	
+					$cat_object = get_term_by('id', $category, 'listing_category');
 				} else {
-					$cat_object = get_term_by('slug', $category, 'listing_category');	
+					$cat_object = get_term_by('slug', $category, 'listing_category');
 				}
 				if($cat_object){
 					$features_temp = get_term_meta($cat_object->term_id,'listeo_taxonomy_multicheck',true);
@@ -910,28 +952,28 @@ public function ajax_get_listings() {
 					<div class="panel-checkboxes-container">
 					<?php
 						$groups = array_chunk($features, 4, true);
-								
+
 						foreach ($groups as $group) { ?>
-							
-							<?php foreach ($group as $feature) { 
-								$feature_obj = get_term_by('slug', $feature, 'listing_feature'); 
+
+							<?php foreach ($group as $feature) {
+								$feature_obj = get_term_by('slug', $feature, 'listing_feature');
 								if( !$feature_obj ){
 									continue;
 								}
-								
+
 								?>
 								<div class="panel-checkbox-wrap">
 									<input form="listeo_core-search-form"  value="<?php echo esc_html($feature_obj->term_id) ?>" type="checkbox" id="in-listing_feature-<?php echo esc_html($feature_obj->term_id) ?>" name="tax_input[listing_feature][]" >
-									<label for="in-listing_feature-<?php echo esc_html($feature_obj->term_id) ?>"><?php echo $feature_obj->name; ?></label>	
+									<label for="in-listing_feature-<?php echo esc_html($feature_obj->term_id) ?>"><?php echo $feature_obj->name; ?></label>
 								</div>
 							<?php } ?>
-							
+
 
 						<?php } ?>
-					
+
 					</div>
 				<?php } else {
-					foreach ($features as $feature) { 
+					foreach ($features as $feature) {
 						$feature_obj = get_term_by('slug', $feature, 'listing_feature');
 						if( !$feature_obj ){
 							continue;
@@ -943,21 +985,21 @@ public function ajax_get_listings() {
 					    </div>
 					<?php }
 				}
-			} else { 
+			} else {
 				if($cat_object){
 
-				
-				if( $cat_object->name) { 
+
+				if( $cat_object->name) {
 					$success = false; ?>
 				<div class="notification notice <?php if($panel){ echo "col-md-12"; } ?>">
 					<p>
 					<?php printf( __( 'Category "%s" doesn\'t have any additional filters', 'listeo_core' ), $cat_object->name )  ?>
-						
+
 					</p>
 				</div>
-				<?php 
+				<?php
 				}
-			} else { 
+			} else {
 					$success = false; ?>
 				<div class="notification warning"><p><?php esc_html_e('Please choose category to display filters','listeo_core') ?></p> </div>
 			<?php }
@@ -966,7 +1008,7 @@ public function ajax_get_listings() {
 			$success = false; ?>
 			<div class="notification warning"><p><?php esc_html_e('Please choose category to display filters','listeo_core') ?></p> </div>
 		<?php }
-				
+
 		$result['output'] = ob_get_clean();
 		$result['success'] = $success;
 		wp_send_json($result);
@@ -977,7 +1019,7 @@ public function ajax_get_listings() {
 	public static function get_search_fields(){
 		$scale = get_option( 'scale', 'sq ft' );
 		$search_fields = array(
-			
+
 			'keyword_search' => array(
 				'placeholder'	=> __( 'What are you looking for?', 'listeo_core' ),
 				'key'			=> 'keyword_search',
@@ -986,7 +1028,7 @@ public function ajax_get_listings() {
 		    	'priority'		=> 1,
 		    	'place'			=> 'main',
 				'type' 			=> 'text',
-			),	
+			),
 			'location_search' => array(
 				'placeholder'	=> __( 'Location', 'listeo_core' ),
 				'key'			=> 'location_search',
@@ -996,8 +1038,8 @@ public function ajax_get_listings() {
 		    	'priority'		=> 2,
 		    	'place'			=> 'main',
 				'type' 			=> 'location',
-			),	
-						
+			),
+
 			'radius' => array(
 				'placeholder' 	=> __( 'Radius around selected destination', 'listeo_core' ),
 				'key'			=> 'search_radius',
@@ -1032,7 +1074,7 @@ public function ajax_get_listings() {
 				'min' 			=> 'auto',
 				'unit' 			=> get_option( 'listeo_currency' ),
 
-			),			
+			),
 			'category' => array(
 				'placeholder'	=> __( 'All Categories', 'listeo_core' ),
 				'key'			=> '_category',
@@ -1042,8 +1084,8 @@ public function ajax_get_listings() {
 		    	'place'			=> 'main',
 				'type' 			=> 'select-taxonomy',
 				'taxonomy' 		=> 'listing_category',
-			),	
-								
+			),
+
 			'features' => array(
 				'placeholder' 	=> __( 'Features', 'listeo_core' ),
 				'key'			=> '_features',
@@ -1066,7 +1108,7 @@ public function ajax_get_listings() {
 	public static function get_search_fields_half(){
 		$scale = get_option( 'scale', 'sq ft' );
 		$search_fields = array(
-			
+
 			'keyword_search' => array(
 				'placeholder'	=> __( 'What are you looking for?', 'listeo_core' ),
 				'key'			=> 'keyword_search',
@@ -1075,17 +1117,17 @@ public function ajax_get_listings() {
 		    	'priority'		=> 1,
 		    	'place'			=> 'main',
 				'type' 			=> 'text',
-			),	
+			),
 			'location_search' => array(
 				'placeholder'	=> __( 'Location', 'listeo_core' ),
 				'key'			=> 'location_search',
 				'class'			=> 'col-fs-6',
-				'css_class'		=> 'input-with-icon location',				
+				'css_class'		=> 'input-with-icon location',
 				'name'			=> 'location_search',
 		    	'priority'		=> 1,
 		    	'place'			=> 'main',
 				'type' 			=> 'location',
-			),	
+			),
 			'category' => array(
 				'placeholder'	=> __( 'Categories', 'listeo_core' ),
 				'key'			=> '_category',
@@ -1110,8 +1152,8 @@ public function ajax_get_listings() {
 				'type' 			=> 'radius',
 				'place'			=> 'panel',
 				'max' 			=> '100',
-				'min' 			=> '1',	
-			),	
+				'min' 			=> '1',
+			),
 			'price' => array(
 				'placeholder'	=> __( 'Price Filter', 'listeo_core' ),
 				'key'			=> '',
@@ -1120,16 +1162,16 @@ public function ajax_get_listings() {
 				'place'			=> 'panel',
 				'max' 			=> 'auto',
 				'min' 			=> 'auto',
-				
-			),	
+
+			),
 			'sortby' => array(
 				'placeholder'	=> __( 'Sort By', 'listeo_core' ),
 				'key'			=> '',
 				'name'			=> '_sortby',
 				'type' 			=> 'sortby',
 				'place'			=> 'panel',
-			),	
-					
+			),
+
 			'submit' => array(
 				'class'			=> 'button fs-map-btn right',
 				'open_row'		=> false,
@@ -1138,7 +1180,7 @@ public function ajax_get_listings() {
 				'name' 			=> 'submit',
 				'type' 			=> 'submit',
 				'placeholder'	=> __( 'Search', 'listeo_core' ),
-			),			
+			),
 		);
 		if(is_post_type_archive('listing')){
 			$top_buttons_conf = get_option('listeo_listings_top_buttons_conf');
@@ -1149,13 +1191,13 @@ public function ajax_get_listings() {
 				}
 				if(!in_array('radius',$top_buttons_conf)){
 					unset($search_fields['radius']);
-					
-				}	
+
+				}
 			}
-			
+
 		// 	'filters' (length=7)
   // 2 => string 'radius'
-			
+
 		}
 
 		return apply_filters('listeo_core_search_fields_half',$search_fields);
@@ -1170,14 +1212,14 @@ public function ajax_get_listings() {
 			// 	'name'			=> 'listeo_core_order',
 		 //    	'place'			=> 'main',
 			// 	'type' 			=> 'hidden',
-			// ),	
+			// ),
 			// 'search_radius' => array(
 			// 	'placeholder'	=> __( 'Radius hidde', 'listeo_core' ),
 			// 	'key'			=> 'search_radius',
 			// 	'name'			=> 'search_radius',
 		 //    	'place'			=> 'main',
 			// 	'type' 			=> 'hidden',
-			// ),	
+			// ),
 			'keyword_search' => array(
 				'placeholder'	=> __( 'What are you looking for?', 'listeo_core' ),
 				'key'			=> 'keyword_search',
@@ -1185,7 +1227,7 @@ public function ajax_get_listings() {
 		    	'priority'		=> 1,
 		    	'place'			=> 'main',
 				'type' 			=> 'text',
-			),	
+			),
 			'location_search' => array(
 				'placeholder'	=> __( 'Location', 'listeo_core' ),
 				'key'			=> 'location_search',
@@ -1211,9 +1253,9 @@ public function ajax_get_listings() {
 				'place'			=> 'panel',
 				'max' 			=> 'auto',
 				'min' 			=> 'auto',
-				
-			),	
-	
+
+			),
+
 		);
 
 		return apply_filters('listeo_core_search_fields_home',$search_fields);
@@ -1221,7 +1263,7 @@ public function ajax_get_listings() {
 
 	public static function get_search_fields_home_box(){
 		$scale = get_option( 'scale', 'sq ft' );
-		$search_fields = array(	
+		$search_fields = array(
 			'location_search' => array(
 				'placeholder'	=> __( 'Location', 'listeo_core' ),
 				'key'			=> 'location_search',
@@ -1249,15 +1291,15 @@ public function ajax_get_listings() {
 				'min' 			=> 'auto',
 				'unit' 			=> get_option( 'listeo_currency' ),
 				'state'			=> 'on'
-			),	
-			
-	
+			),
+
+
 		);
 
 		return apply_filters('listeo_core_search_fields_homebox',$search_fields);
 	}
 
-	
+
 	public function output_search_form( $atts = array() ){
 		extract( $atts = shortcode_atts( apply_filters( 'listeo_core_output_defaults', array(
 			'source'			=> 'sidebar', // home/sidebar/split
@@ -1282,7 +1324,7 @@ public function ajax_get_listings() {
 				if(isset($search_fields['_price'])){
 					$search_fields['_price']['place'] = 'panel';
 				}
-				
+
 				if(isset($search_fields['search_radius'])){
 					$search_fields['search_radius']['place'] = 'panel';
 				}
@@ -1290,7 +1332,7 @@ public function ajax_get_listings() {
 
 			case 'sidebar':
 				$search_fields = $this->get_search_fields();
-				
+
 				break;
 
 			case 'half':
@@ -1301,14 +1343,14 @@ public function ajax_get_listings() {
 				$search_fields = $this->get_search_fields_home_box();
 
 				break;
-			
+
 			default:
-				$search_fields = $this->get_search_fields_home();	
+				$search_fields = $this->get_search_fields_home();
 				break;
 
 		}
 
-		
+
 		if(isset($search_fields['tax-listing_feature'])){
 			$search_fields['tax-listing_feature']['dynamic'] = (get_option('listeo_dynamic_features')=="on") ? "yes" : "no";
 		}
@@ -1319,14 +1361,14 @@ public function ajax_get_listings() {
 		$ajax = ($ajax_browsing == 'on') ? 'ajax-search' : get_option('listeo_ajax_browsing') ;
 		if($ajax_browsing == 'on'){
 			if(isset($search_fields['submit'])){
-				unset($search_fields['submit']);	
+				unset($search_fields['submit']);
 			}
-			
+
 		}
-		
+
 		if(!get_option('listeo_maps_api_server')){
-				unset($search_fields['radius']);	
-				unset($search_fields['search_radius']);	
+				unset($search_fields['radius']);
+				unset($search_fields['search_radius']);
 		}
 		if($source == 'home'){
 			foreach ($search_fields as $key => $value) {
@@ -1340,19 +1382,19 @@ public function ajax_get_listings() {
 		$template_loader = new Listeo_Core_Template_Loader;
 
 		//$action = get_post_type_archive_link( 'listing' );
-		
+
 		if(is_author()) {
 			$author = get_queried_object();
     		$author_id = $author->ID;
 			$action = get_author_posts_url($author_id);
 		}
-		
 
-		
-		ob_start();	
+
+
+		ob_start();
 		if($wrap_with_form == 'yes') { ?>
 		<form action="<?php echo $action; ?>" id="listeo_core-search-form" class="t1 <?php if($dynamic_filters == 'on') { echo esc_attr('dynamic'); }  ?> <?php echo esc_attr($custom_class) ?> <?php echo esc_attr($ajax) ?>" method="GET">
-		<?php } 
+		<?php }
 		if( in_array($source, array('home')) ) { ?>
 			<div class="main-search-input">
 		<?php }
@@ -1379,42 +1421,42 @@ public function ajax_get_listings() {
 				if( in_array($source, array('home','homebox')) && $value['type']!='hidden') { ?>
 					<div class="main-search-input-item <?php echo ($value['type']=='slider') ? 'slider_type' : esc_attr($value['type']); ?>">
 				<?php }
-				
+
 				if(isset($value['place']) && $value['place'] == 'main') {
-					
+
 					//displays search form
-					
+
 					if($source == 'half') {
-						
+
 						if($temp_count==0){
 							echo '<div class="row with-forms">';
 						}
 						$temp_count++;
 						$template_loader->set_template_data( $value )->get_template_part( 'search-form/'.$value['type']);
 						if($temp_count==$count){
-							echo '</div>';	
+							echo '</div>';
 						}
-						
+
 					} else {
 
 						if($source == 'sidebar') { echo '<div class="row with-forms">'; }
 							$template_loader->set_template_data( $value )->get_template_part( 'search-form/'.$value['type']);
 						if($source == 'sidebar') { echo '</div>'; }
-					
+
 					}
-					
-					
+
+
 					if($value['type'] == 'radius') { ?>
 						<div class="row with-forms">
 							<div class="col-md-12">
 								<span class="panel-disable" data-disable="<?php echo esc_attr_e( 'Disable Radius', 'listeo_core' ); ?>" data-enable="<?php echo esc_attr_e( 'Enable Radius', 'listeo_core' ); ?>"><?php esc_html_e('Disable Radius', 'listeo_core'); ?></span>
 							</div>
 						</div>
-						
-					<?php } 
+
+					<?php }
 				}
 
-				if( in_array($source, array('home','homebox'))  ) { 
+				if( in_array($source, array('home','homebox'))  ) {
 					//fix for price on home search
 					if(isset($value['place']) && $value['place'] == 'panel') {
 						?>
@@ -1423,9 +1465,9 @@ public function ajax_get_listings() {
 							<div class="panel-dropdown <?php if( $value['type'] == 'multi-checkbox-row') { echo "wide"; } if($value['type'] == 'radius') { echo 'radius-dropdown'; } ?> " id="<?php echo esc_attr( $value['name']); ?>-panel">
 								<a href="#"><?php echo esc_html($value['placeholder']); ?></a>
 								<div class="panel-dropdown-content <?php if( $value['type'] == 'multi-checkbox-row') { echo "checkboxes"; } ?> <?php if(isset($value['dynamic']) && $value['dynamic']=='yes'){ echo esc_attr('dynamic'); }?>">
-							<?php } 
-							
-							$template_loader->set_template_data( $value )->get_template_part( 'search-form/'.$value['type']); 
+							<?php }
+
+							$template_loader->set_template_data( $value )->get_template_part( 'search-form/'.$value['type']);
 
 							if( isset($value['type']) && $value['type'] != 'submit' ) { ?>
 							<!-- Panel Dropdown -->
@@ -1435,22 +1477,22 @@ public function ajax_get_listings() {
 										<?php } else { ?>
 											<span class="panel-cancel"><?php esc_html_e('Close', 'listeo_core'); ?></span>
 										<?php } ?>
-										
+
 										<button class="panel-apply"><?php esc_html_e('Apply', 'listeo_core'); ?></button>
 									</div>
 								</div>
 							</div>
 						<?php }
-						
+
 					}
 				}
 				if( in_array($source, array('home','homebox'))  && $value['type']!='hidden') { ?>
 					</div>
 				<?php }
-			} 
+			}
 			?>
-			
-			<?php if($more_trigger == 'yes') : ?>				
+
+			<?php if($more_trigger == 'yes') : ?>
 				<!-- More Search Options -->
 				<a href="#" class="more-search-options-trigger <?php echo esc_attr($more_custom_class) ?>" data-open-title="<?php echo esc_attr($more_text_open) ?>" data-close-title="<?php echo esc_attr($more_text_close) ?>"></a>
 				<?php if($more_trigger_style == "over") : ?>
@@ -1475,19 +1517,19 @@ public function ajax_get_listings() {
 			<?php if( $source!='home' && $panel_trigger == 'yes' ) { ?>
 				<div class="row">
 				<?php echo ($source=='half') ? '<div class="col-fs-12 panel-wrapper">' : '<div class="col-md-12  panel-wrapper">' ; {  ?>
-					<?php 
-					foreach ($search_fields as $key => $value) { 
+					<?php
+					foreach ($search_fields as $key => $value) {
 						if($source != 'home' && isset($value['place']) && $value['place'] == 'panel') {
 						?>
-							
+
 							<?php if( isset($value['type']) && !in_array($value['type'], array('submit','sortby')) ) { ?>
 							<!-- Panel Dropdown -->
 							<div class="panel-dropdown <?php if( $value['type'] == 'multi-checkbox-row') { echo "wide"; } if($value['type'] == 'radius') { echo 'radius-dropdown'; } ?> " id="<?php echo esc_attr( $value['name']); ?>-panel">
 								<a href="#"><?php echo esc_html($value['placeholder']); ?></a>
 								<div class="panel-dropdown-content <?php if( $value['type'] == 'multi-checkbox-row') { echo "checkboxes"; } ?> <?php if(isset($value['dynamic']) && $value['dynamic']=='yes'){ echo esc_attr('dynamic'); }?>" style="width:350px;">
-							<?php } 
-							
-							$template_loader->set_template_data( $value )->get_template_part( 'search-form/'.$value['type']); 
+							<?php }
+
+							$template_loader->set_template_data( $value )->get_template_part( 'search-form/'.$value['type']);
 
 							if( isset($value['type']) && !in_array($value['type'], array('submit','sortby')) ) { ?>
 							<!-- Panel Dropdown -->
@@ -1497,7 +1539,7 @@ public function ajax_get_listings() {
 										<?php } else { ?>
 											<span class="panel-cancel"><?php esc_html_e('Close', 'listeo_core'); ?></span>
 										<?php } ?>
-										
+
 										<button class="panel-apply"><?php esc_html_e('Apply', 'listeo_core'); ?></button>
 									</div>
 								</div>
@@ -1541,7 +1583,7 @@ public function ajax_get_listings() {
 			$type_query = false;
 		}
 		if($meta_key):
-	
+
 			$result = $wpdb->get_var(
 		    $wpdb->prepare("
 		            SELECT min(m2.meta_value + 0)
@@ -1555,11 +1597,11 @@ public function ajax_get_listings() {
 					AND ( m2.meta_key IN ( %s, %s)  ) AND m2.meta_value != ''
 		        ", $meta_key.'_min', $meta_key.'_max' )
 		    ) ;
-		    
+
 		endif;
 
 	    return $result;
-	}	
+	}
 
 	public static function get_max_meta_value($meta_key = '',$type = '' ) {
 		global $wpdb;
@@ -1570,7 +1612,7 @@ public function ajax_get_listings() {
 			$type_query = false;
 		}
 		if($meta_key):
-		
+
 			$result = $wpdb->get_var(
 		    $wpdb->prepare("
 		            SELECT max(m2.meta_value + 0)
@@ -1584,9 +1626,9 @@ public function ajax_get_listings() {
 					AND ( m2.meta_key IN ( %s, %s)  ) AND m2.meta_value != ''
 		        ", $meta_key.'_min', $meta_key.'_max' )
 		    );
-		  
+
 	    endif;
-	   
+
 
 	    return $result;
 	}

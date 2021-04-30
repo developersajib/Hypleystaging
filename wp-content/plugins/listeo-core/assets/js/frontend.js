@@ -1055,7 +1055,7 @@
 				var m_ekthret_found = 0;
 			}
 
-			if(m_email_found == 1 || m_mobile_found == 1  || m_url_found == 1 || m_ekthret_found == 1) {
+			if(m_email_found == 1 || m_mobile_found == 1  || m_url_found == 1 || m_ekthret_found == 1 || filter_hyply_chat_message(message) == 1) {
 				var listeo_msg_err = '<div style="margin-top: 5px;" class="listeo_msg_err notification error listing-manager-error">Websites, emails and phone numbers aren’t allowed in message. To keep Hypley users and yourself safe from phishing, scraping etc please remove to continue publishing your message.<a class="close"></a></div>';
 				$('.listeo_msg_err').remove();
 				$("#contact-message").after(listeo_msg_err);
@@ -2093,7 +2093,7 @@
         var email_mobile_notic = '<div style="margin-top: 5px;" class="emailnotic_listing_description notification error listing-manager-error"><p>Please enter minimum 35 characters for description</p></a></div>';
         $("#wp-listing_description-editor-container").after(email_mobile_notic);
       }
-      else if(email_found == 1 || mobile_found == 1  || url_found == 1 || ekthret_found == 1) {
+      else if(email_found == 1 || mobile_found == 1  || url_found == 1 || ekthret_found == 1 ||  filter_hyply_chat_message(listing_description) == 1) {
             $(this).addClass("invalid_listing_description");
             $(".emailnotic_listing_description").remove();
             var email_mobile_notic = '<div style="margin-top: 5px;" class="emailnotic_listing_description notification error listing-manager-error">Websites, emails and phone numbers aren’t allowed in listing descriptions. To keep Hypley users and yourself safe from phishing, scraping etc please remove to continue publishing your listing.<a class="close"></a></div>';
@@ -2287,7 +2287,7 @@ jQuery("#contact-message").blur(function() {
       var ekthret_found = 0;
     }
 
-    if(email_found == 1 || mobile_found == 1  || url_found == 1 || ekthret_found == 1) {
+    if(email_found == 1 || mobile_found == 1  || url_found == 1 || ekthret_found == 1 || filter_hyply_chat_message(message) == 1) {
         jQuery(this).addClass("invalid_listing_description");
         jQuery(".listeo_msg_err").remove();
         var email_mobile_notic = '<div style="margin-top: 5px;" class="listeo_msg_err notification error listing-manager-error">Websites, emails and phone numbers aren’t allowed in message. To keep Hypley users and yourself safe from phishing, scraping etc please remove to continue publishing your message.<a class="close"></a></div>';
@@ -2298,3 +2298,38 @@ jQuery("#contact-message").blur(function() {
         jQuery(".listeo_msg_err").remove();
     }
 });
+
+
+function filter_hyply_chat_message(message){
+  if(
+    message.includes('www') ||
+    message.includes('com') ||
+    message.includes('fb') ||
+    message.includes('Facebook') ||
+    message.includes('instagram') ||
+    message.includes('insta') ||
+    message.includes('@') ||
+    message.includes('call') ||
+    message.includes('website') ||
+    message.includes('visit') ||
+    message.includes('search') ||
+    message.includes('find us') ||
+    message.includes('google') ||
+    message.includes('username') ||
+    message.includes('mail') ||
+    message.includes('contact') ||
+    message.includes('phone number') ||
+    message.includes('Email id') ||
+    message.includes('Email address') ||
+    message.includes('business name') ||
+    message.includes('site') ||
+    message.includes('Email')) {
+    var email_text_found = 1;
+    //console.log("email found");
+  }
+  else {
+      var email_text_found = 0;
+  }
+
+  return email_text_found;
+}

@@ -1970,7 +1970,7 @@ span.cm-chat-icon {
     border-radius: 50%;
     transition: all 0.4s;
     background-color: rgb(148 148 157 / 0.08);
-    color: #0bee0f;
+    color: #f65a5f;
 
   }
 
@@ -2003,7 +2003,7 @@ span.cm-chat-icon {
 
   .cm-chat-icon:hover,
   .cm-chat-icon.liked {
-    background-color: #0bee0f;
+    background-color: #f65a5f;
     color: #fff;
   }
 
@@ -2058,4 +2058,35 @@ span.cm-chat-icon {
         height: 25px;
         right: 40px;
     }
+}
+
+
+
+
+/*** 28 April 2021 ****/
+
+.messages-container-inner .message-content{
+    overflow-y: scroll;
+    height: 100vh;
+}
+
+#titlebar.listing-titlebar .listing-titlebar-title .listing-tag{
+    display: none !important;
+}
+
+@media (max-width: 767px){
+    #titlebar.listing-titlebar {
+        padding: 20px 0 40px !important;
+    }
+}
+
+
+span.counter {
+    position: absolute;
+    top: 10px;
+    left: 21px;
+    text-align: center;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
 }

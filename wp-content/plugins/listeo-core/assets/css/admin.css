@@ -14,14 +14,14 @@
 	line-height: 1.6;
 }
 
-.postbox-container .cmb2-wrap > .cmb-field-list > .cmb-row, 
+.postbox-container .cmb2-wrap > .cmb-field-list > .cmb-row,
 .cmb-repeat-group-wrap .cmb2-wrap > .cmb-field-list > .cmb-row {
 	padding: 15px 0;
 }
 
-.postbox-container .cmb-repeat-group-field, 
-.postbox-container .cmb-remove-field-row, 
-.cmb-repeat-group-wrap .cmb-repeat-group-field, 
+.postbox-container .cmb-repeat-group-field,
+.postbox-container .cmb-remove-field-row,
+.cmb-repeat-group-wrap .cmb-repeat-group-field,
 .cmb-repeat-group-wrap .cmb-remove-field-row {
 	padding-top: 15px;
 }
@@ -30,7 +30,7 @@
 	border-bottom: 0;
 }
 
-.postbox-container .cmb-repeat-row .cmb-td, 
+.postbox-container .cmb-repeat-row .cmb-td,
 .cmb-repeat-group-wrap .cmb-repeat-row .cmb-td {
 	padding-bottom: 15px;
 }
@@ -39,14 +39,14 @@
 	padding-top: 0;
 }
 
-.postbox-container .cmb2-metabox > .cmb-row.table-layout .cmb-repeat-table .cmb-tbody .cmb-row:not(:first-of-type) .cmb-td, 
-.postbox-container .cmb2-metabox > .cmb-row .cmb-row.table-layout .cmb-repeat-table .cmb-tbody .cmb-row:not(:first-of-type) .cmb-td, 
-.cmb-repeat-group-wrap .cmb2-metabox > .cmb-row.table-layout .cmb-repeat-table .cmb-tbody .cmb-row:not(:first-of-type) .cmb-td, 
+.postbox-container .cmb2-metabox > .cmb-row.table-layout .cmb-repeat-table .cmb-tbody .cmb-row:not(:first-of-type) .cmb-td,
+.postbox-container .cmb2-metabox > .cmb-row .cmb-row.table-layout .cmb-repeat-table .cmb-tbody .cmb-row:not(:first-of-type) .cmb-td,
+.cmb-repeat-group-wrap .cmb2-metabox > .cmb-row.table-layout .cmb-repeat-table .cmb-tbody .cmb-row:not(:first-of-type) .cmb-td,
 .cmb-repeat-group-wrap .cmb2-metabox > .cmb-row .cmb-row.table-layout .cmb-repeat-table .cmb-tbody .cmb-row:not(:first-of-type) .cmb-td {
 	padding-top: 0;
 }
 
-.postbox-container .cmb-row, 
+.postbox-container .cmb-row,
 .cmb-repeat-group-wrap .cmb-row {
 	padding-bottom: 15px;
 }
@@ -216,7 +216,7 @@
 	padding: 12px 17px;
 }
 
-.single-slot-right { 
+.single-slot-right {
     flex: 0 0 auto;
     background-color: #eee;
     position: relative;
@@ -376,7 +376,7 @@ input[type="time"]::-webkit-clear-button{
 .add-slot-inputs input::-webkit-outer-spin-button,
 .add-slot-inputs input::-webkit-inner-spin-button {
     -webkit-appearance: none;
-    margin: 0; 
+    margin: 0;
 }
 
 .add-slot-inputs input{ padding-right: 4px; }
@@ -456,7 +456,7 @@ input[type="time"]::-webkit-clear-button{
 	font-weight: 700;
 	text-align: center;
 }
-.plusminus input[type="number"]::-webkit-outer-spin-button, 
+.plusminus input[type="number"]::-webkit-outer-spin-button,
 .plusminus input[type="number"]::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
@@ -543,8 +543,8 @@ input[type="time"]::-webkit-clear-button{
 	.add-slot-btn button {
 		width: 100%;
 		margin-left: 0;
-		margin-top: 8px; 
-		background-color: rgba(255,255,255,0.15); 
+		margin-top: 8px;
+		background-color: rgba(255,255,255,0.15);
 		color: #fff;
 		padding: 3px 0;
 	}
@@ -557,7 +557,7 @@ input[type="time"]::-webkit-clear-button{
 	}
 	.listeo_is_offer_price_title{
 		    padding: 8px 15px;
-	}	
+	}
 	.listeo_is_offer_price_title h6{
 		font-size: 14px;
 		width: 100%;
@@ -649,7 +649,7 @@ input[type="time"]::-webkit-clear-button{
 }
 /* .week-day-cell td span.calendar-day-date {
     border-top: 3px solid #54ba1d;
-    display: block;    
+    display: block;
     font-weight: bold;
     cursor: pointer;
     font-size: 1.5em;
@@ -741,14 +741,14 @@ input[type="time"]::-webkit-clear-button{
 .calendar-day-date-name { display: none; }
 
 @media (max-width: 900px) {
-    
+
     table#listeo-calendar-outer .week-name-title th { display: none; }
     table#listeo-calendar-outer th { display: block; }
     table#listeo-calendar-outer td {
         display: block;
         margin-bottom: 20px;
     }
-    
+
      table#listeo-calendar-outer .listeo-empty-calendar-day { display: none; }
      .calendar-day-date-name { display: block; }
 }
@@ -983,14 +983,14 @@ border-color: transparent transparent transparent #242424;
 	display: block;
 }
 
-#leaflet-geocode-cont ul { 
+#leaflet-geocode-cont ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
 
 
-#leaflet-geocode-cont ul li { 
+#leaflet-geocode-cont ul li {
 	color: #888;
 	font-size: 13px;
 	font-weight: 400;
@@ -1007,7 +1007,7 @@ overflow: hidden;
 text-overflow: ellipsis; */
 }
 
-#leaflet-geocode-cont ul li:before { 
+#leaflet-geocode-cont ul li:before {
 	content: "\f041";
 	font-family: "FontAwesome";
 	font-size: 14px;
@@ -1021,9 +1021,9 @@ text-overflow: ellipsis; */
 
 #leaflet-geocode-cont ul li:hover:before {
 	color: #a0a0a0;
-} 
+}
 
-#leaflet-geocode-cont ul li:last-child { 
+#leaflet-geocode-cont ul li:last-child {
 	border: none;
 	border-radius: 0 0 4px 4px;
 }
@@ -1031,7 +1031,7 @@ text-overflow: ellipsis; */
 #leaflet-geocode-cont ul li.selected,
 #leaflet-geocode-cont ul li:hover {
 	background: #fafafa;
-} 
+}
 
 #leaflet-geocode-cont span.highlight {
 	color: #222;
@@ -1221,7 +1221,7 @@ body .listeo_msg_inbox ul li a {
 /* Single Message */
 
 .single_all_user_con_margin_top{
-	margin-top: 15px;	
+	margin-top: 15px;
 }
 
 .listeo_msg_container_inner {
@@ -1320,6 +1320,7 @@ body .listeo_msg_inbox ul li a {
 	padding: 0;
 	margin: 0;
 	line-height: 27px;
+	margin-bottom: 15px;
 }
 
 .listeo_msg_bubble .listeo_msg_text:before {
@@ -1370,8 +1371,8 @@ body .listeo_msg_inbox ul li a {
 .listeo_is_offer_price_title{
 	padding: 8px 20px;
 	background-color: #e8e8e8;
-	color: #000000; 
-	
+	color: #000000;
+
 }
 .listeo_is_offer_price_title h6{
 	font-weight: bold;
@@ -1399,7 +1400,7 @@ body .listeo_msg_inbox ul li a {
     padding-bottom: 10px;
 }
 .listeo_offer_payment_url_btn a{
-	text-decoration: none;	
+	text-decoration: none;
     width: auto;
     padding: 5px 20px;
     border-radius: 5px;
@@ -1479,7 +1480,7 @@ body .listeo_msg_inbox ul li a {
     display: block;
 }
 .listeo_msg_bubble .listeo_msg_text .view-attachment .message-attachment .download-image img {
-    position: relative;  
+    position: relative;
      object-fit: cover;
     width: 100%;
     height: 100%;
@@ -1498,10 +1499,10 @@ body .listeo_msg_inbox ul li a {
     z-index: 9;
 }
 .listeo_view_attach_msg{
-	display: flex;
+	/*display: flex;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
-    justify-content: space-between;
+    justify-content: space-between;*/
 }
 .listeo_single_conv_between{
 	margin-top: -35px;

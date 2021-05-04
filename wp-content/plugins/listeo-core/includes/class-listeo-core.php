@@ -450,7 +450,7 @@ class Listeo_Core {
 	 * @return  void
 	 */
 	public function admin_enqueue_styles ( $hook = '' ) {
-		wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(), $this->_version );
+		wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(), $this->_version + 1 );
 		wp_enqueue_style( $this->_token . '-admin' );
 	} // End admin_enqueue_styles ()
 

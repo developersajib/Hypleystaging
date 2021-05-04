@@ -1261,8 +1261,8 @@ class Listeo_Core_Submit  {
 						);
 		
 		
-		$this->fields['details']['fields']['_email_contact_widget']['type']='hidden';
-		$this->fields['details']['fields']['_email_contact_widget']['value']='on'; 
+		//$this->fields['details']['fields']['_email_contact_widget']['type']='hidden';
+		//$this->fields['details']['fields']['_email_contact_widget']['value']='on'; 
 		$this->fields['menu']['fields']['_menu_status']['type']='hidden';
 		$this->fields['menu']['fields']['_menu_status']['value']='on'; 
 		

@@ -427,3 +427,81 @@ function add_cmb2_css_admin(){
 }
 
 add_action('admin_head', 'add_cmb2_css_admin');
+
+
+
+
+function get_vendor_average_response_time($user_id){
+	global $wpdb;
+
+	$selectCon= $wpdb->get_results("SELECT *  FROM {$wpdb->prefix}listeo_core_conversations WHERE user_2 = {$user_id}");
+	$countCon= $wpdb->get_results("SELECT COUNT(id) as count  FROM {$wpdb->prefix}listeo_core_conversations WHERE user_2 = {$user_id} ");
+
+	$alltime = NULL;
+	foreach($selectCon as $con){
+		$time = $wpdb->get_results("SELECT con.id, con.user_1, con.user_2, m.message, FROM_UNIXTIME(con.timestamp),FROM_UNIXTIME( m.created_at), AVG(TIMESTAMPDIFF(SECOND, FROM_UNIXTIME(con.timestamp), FROM_UNIXTIME(m.created_at))) AS DiffInMinute FROM {$wpdb->prefix}listeo_core_conversations AS con JOIN {$wpdb->prefix}listeo_core_messages AS m ON con.id = m.conversation_id AND con.id = {$con->id} AND con.user_2 = {$user_id} AND m.sender_id = {$user_id} LIMIT 1");
+		$alltime += (int)$time[0]->DiffInMinute;
+	}
+
+	if($alltime > 0 && $countCon[0]->count > 0){
+		return secondsToResponseTime($alltime / $countCon[0]->count);
+	}else{
+		return "within 24 hours";
+	}
+}
+
+
+function get_vendor_average_response_rate($user_id){
+	global $wpdb;
+	$selectCon= $wpdb->get_results("SELECT *  FROM {$wpdb->prefix}listeo_core_conversations WHERE user_2 = {$user_id}");
+
+	$alltime = [];
+	foreach($selectCon as $con){
+		$time = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}listeo_core_messages WHERE conversation_id = {$con->id} AND sender_id = {$user_id} LIMIT 1");
+		if(!empty($time)){
+			$alltime[]= $time;
+		}
+
+	}
+	if((int) count($alltime) > 0 && (int) count($selectCon) > 0){
+		$rate =  15;//(int) count($alltime)/ (int) count($selectCon) * 100;
+	}else{
+		$rate = null;
+	}
+
+	if((10 <= $rate) && ($rate <= 60)){
+		return '<span style="color:#f00;">Bad</span>';
+	}
+	if((60 <= $rate) && ($rate <= 80)){
+		return '<span style="color:#ffc107;">Good</span>';
+	}
+	if((80 <= $rate) && ($rate <= 100)){
+		return '<span style="color:#8bc34a;">Excellent </span>';
+	}
+
+}
+
+
+function secondsToResponseTime($ss) {
+	$s = $ss%60;
+	$m = floor(($ss%3600)/60);
+	$h = floor(($ss%86400)/3600);
+	$d = floor(($ss%2592000)/86400);
+	$M = floor($ss/2592000);
+
+	$time = "$M months";
+	if($M == 0){
+		$time = $d > 1 ? "within $d days" : "within $d day";
+	}
+	if($d == 0){
+		$time = $h > 1 ? "within $h hours" : "within $h hour";
+	}
+	if($h == 0){
+		$time = $m > 1 ? "within $m minutes" : "within $m minute";
+	}
+	if($m == 0){
+		$time = $s > 1 ? "within $s seconds" : "within $s second";
+	}
+	return $time;
+}
+

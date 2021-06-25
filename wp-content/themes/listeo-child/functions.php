@@ -470,7 +470,8 @@ function get_vendor_average_response_rate($user_id){
 	}
 
 	if((10 <= $rate) && ($rate <= 60)){
-		return '<span style="color:#f00;">Bad</span>';
+		//return '<span style="color:#f00;">Bad</span>';
+		return null;
 	}
 	if((60 <= $rate) && ($rate <= 80)){
 		return '<span style="color:#ffc107;">Good</span>';

@@ -1561,9 +1561,9 @@ class Listeo_Core_Owner_Widget extends Listeo_Core_Widget {
 					</div>
 				</div>
 				<div class="vendor-meta-details text-center">
-					<!-- <?php // if($resrate = get_vendor_average_response_rate($owner_data->id)) : ?>
-						<p style="padding-bottom:0 !important;margin-bottom:0 !important;">Response Rate: <?php //echo $resrate ?> </p>
-						<?php // endif; ?> -->
+					 <?php  if($resrate = get_vendor_average_response_rate($owner_data->id)) : ?>
+						<p style="padding-bottom:0 !important;margin-bottom:0 !important;">Response Rate: <?php echo $resrate ?> </p>
+						<?php  endif; ?>
 					<?php if($restime = get_vendor_average_response_time($owner_data->id)) : ?>
 						<p>Response time: <strong><?php echo $restime ?></strong> </p>
 					<?php endif; ?>
@@ -1605,9 +1605,9 @@ class Listeo_Core_Owner_Widget extends Listeo_Core_Widget {
 
 
 			<div class="vendor-meta-details text-center">
-					<!-- <?php // if($resrate = get_vendor_average_response_rate($owner_data->id)) : ?>
-						<p style="padding-bottom:0 !important;margin-bottom:0 !important;">Response Rate: <?php //echo $resrate ?> </p>
-					<?php // endif; ?> -->
+					 <?php if($resrate = get_vendor_average_response_rate($owner_data->id)) : ?>
+						<p style="padding-bottom:0 !important;margin-bottom:0 !important;">Response Rate: <?php echo $resrate ?> </p>
+					<?php  endif; ?>
 					<?php if($restime = get_vendor_average_response_time($owner_data->id)) : ?>
 						<p>Response time: <strong><?php echo $restime ?></strong> </p>
 					<?php endif; ?>
